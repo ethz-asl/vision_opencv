@@ -9,6 +9,17 @@ include(ExternalProject)
 
 file(MAKE_DIRECTORY ${CATKIN_DEVEL_PREFIX}/include)
 
+if(APPLE)
+  execute_process(COMMAND python-config --prefix
+                  OUTPUT_VARIABLE PYTHON_PREFIX_PATH)
+  string(REGEX REPLACE "\n$" "" PYTHON_PREFIX_PATH "${PYTHON_PREFIX_PATH}")
+  SET(OSX_EXTRA_FLAGS "
+    -DPYTHON2_PACKAGES_PATH=${CATKIN_DEVEL_PREFIX}/lib/python2.7/site-packages
+    -DPYTHON2_LIBRARY=${PYTHON_PREFIX_PATH}/bin")
+  message("extra flags: " ${OSX_EXTRA_FLAGS})
+endif()
+
+
 SET(CONTRIB_NAME "opencv3_contrib")
 ExternalProject_Add(${CONTRIB_NAME}
   URL https://github.com/opencv/opencv_contrib/archive/3.1.0.zip
@@ -32,9 +43,10 @@ ExternalProject_Add(opencv3_src
   CONFIGURE_COMMAND cd ../${OPENCV_SRC_PATH} && cmake
     -DOPENCV_EXTRA_MODULES_PATH=../${CONTRIB_NAME}_src/modules .
     -DWITH_TBB=ON
-    -DPYTHON2_PACKAGES_PATH=${CATKIN_DEVEL_PREFIX}/lib/python2.7/site-packages    
-    -DPYTHON2_LIBRARY=/usr/local/Cellar/python/2.7.10_2/Frameworks/Python.framework/Versions/2.7/bin
-    -DPYTHON2_INCLUDE_DIR=/usr/local/Frameworks/Python.framework/Headers
+    ${OSX_EXTRA_FLAGS}
+    # -DPYTHON2_PACKAGES_PATH=${CATKIN_DEVEL_PREFIX}/lib/python2.7/site-packages
+    # -DPYTHON2_LIBRARY=/usr/local/Cellar/python/2.7.10_2/Frameworks/Python.framework/Versions/2.7/bin
+    # -DPYTHON2_INCLUDE_DIR=/usr/local/Frameworks/Python.framework/Headers
     -DBUILD_opencv_python2=ON
     -DBUILD_opencv_python3=OFF
     -DWITH_V4L=ON
