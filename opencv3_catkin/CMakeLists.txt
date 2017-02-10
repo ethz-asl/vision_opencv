@@ -14,7 +14,8 @@ if(APPLE)
                   OUTPUT_VARIABLE PYTHON_PREFIX_PATH)
   string(REGEX REPLACE "\n$" "" PYTHON_PREFIX_PATH "${PYTHON_PREFIX_PATH}")
   SET(OSX_EXTRA_FLAGS "-DPYTHON2_PACKAGES_PATH=${CATKIN_DEVEL_PREFIX}/lib/python2.7/site-packages "
-                      "-DPYTHON2_LIBRARY=${PYTHON_PREFIX_PATH}/bin")
+                      "-DPYTHON2_LIBRARY=${PYTHON_PREFIX_PATH}/bin "
+                      "-DPYTHON2_INCLUDE_DIR=${PYTHON_PREFIX_PATH}/Headers")
   message("extra flags: " ${OSX_EXTRA_FLAGS})
 endif()
 
